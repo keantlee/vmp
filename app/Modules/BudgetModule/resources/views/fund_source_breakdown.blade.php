@@ -34,7 +34,7 @@
             }
         });
 
-        var table = $('#yajra-datatable').DataTable({
+        var table = $('#fund_source_breakdown_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax:  {
@@ -46,9 +46,44 @@
                 {data: 'supplier_name', name: 'supplier_name'},
                 {data: 'description', name: 'description'},
                 {data: 'quantity', name: 'quantity'},
-                {data: 'amount', name: 'amount'},
-                {data: 'total_amount', name: 'total_amount', orderable: true, searchable: true},
-            ]
+                {data: 'amount', name: 'amount', render: $.fn.dataTable.render.number( ',', '.', 2, '&#8369;'  ).display},
+                {data: 'total_amount', name: 'total_amount', render: $.fn.dataTable.render.number( ',', '.', 2, '&#8369;'  ).display, orderable: true, searchable: true},
+            ],
+            "footerCallback": function ( row, data, start, end, display ) {
+                var api = this.api(), data;
+    
+                // Remove the formatting to get integer data for summation
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\₱,]/g, '')*1 :
+                        typeof i === 'number' ?
+                            i : 0;
+                };
+
+                // quantity column[4]: get it's total sum
+                total_quantity = api
+                        .column( 4 )
+                        .data()
+                        .reduce( function (a, b) {
+                                    return (a)*1 + (b)*1;}, 0 );
+                        $( api.column( 4 ).footer() ).html("Total quantity:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+$.fn.dataTable.render.number(',', '.').display(total_quantity) );
+
+                // amount column[5]: get it's total sum
+                total_amount = api
+                        .column( 5 )
+                        .data()
+                        .reduce( function (a, b) {
+                                    return (a)*1 + (b)*1;}, 0 );
+                        $( api.column( 5 ).footer() ).html("Total amount:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+$.fn.dataTable.render.number(',', '.', 2, '&#8369;').display(total_amount) );
+
+                // Total amount column[6]: get it's total sum
+                total_amount_of_voucher = api
+                        .column( 6 )
+                        .data()
+                        .reduce( function (a, b) {
+                                    return (a)*1 + (b)*1;}, 0 );
+                        $( api.column( 6 ).footer() ).html("Total amount of voucher:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+$.fn.dataTable.render.number(',', '.', 2, '&#8369;').display(total_amount_of_voucher) );
+            }
         });
     });
 </script>
@@ -76,20 +111,29 @@
         <h4 class="panel-title">Fund Source Breakdown</h4>
     </div>
     <div class="panel-body">
-        <table id="yajra-datatable" class="table table-striped table-bordered text-center mt-5">            
-            <thead>
+        <table id="fund_source_breakdown_tbl" class="table table-striped table-bordered table-hover text-center mt-5">            
+            <thead style="background-color: #008a8a">
                 <tr>      
-                    <th> Fund Source </th>              
-                    <th> Reference No. </th>
-                    <th> Supplier </th>
-                    <th> Program </th>
-                    <th> Quantity </th>
-                    <th> Amount </th>
-                    <th> Total Amount </th>
+                    <th style="color: white"> Fund Source </th>              
+                    <th style="color: white"> Reference No. </th>
+                    <th style="color: white"> Supplier </th>
+                    <th style="color: white"> Program </th>
+                    <th style="color: white"> Quantity </th>
+                    <th style="color: white"> Amount </th>
+                    <th style="color: white"> Total Amount </th>
                 </tr>
             </thead>
             <tbody>
             </tbody>
+            <tfoot>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tfoot>
         </table>
     </div>
 </div>

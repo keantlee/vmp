@@ -130,6 +130,88 @@
 		});
 	});
 </script>
+<script>
+    // Jquery Dependency
+    $("input#amount").on({keyup: function () {
+        formatCurrency($(this));
+    },
+    blur: function () {
+        formatCurrency($(this), "blur");
+    }
+    });
+
+    function formatNumber(n) {
+    // format number 1000000 to 1,234,567
+    return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function formatCurrency(input, blur) {
+    // appends $ to value, validates decimal side
+    // and puts cursor back in right position.
+
+    // get input value
+    var input_val = input.val();
+
+    // don't validate empty input
+    if (input_val === "") {
+        return;
+    }
+
+    // original length
+    var original_len = input_val.length;
+
+    // initial caret position
+    var caret_pos = input.prop("selectionStart");
+
+    // check for decimal
+    if (input_val.indexOf(".") >= 0) {
+        // get position of first decimal
+        // this prevents multiple decimals from
+        // being entered
+        var decimal_pos = input_val.indexOf(".");
+
+        // split number by decimal point
+        var left_side = input_val.substring(0, decimal_pos);
+        var right_side = input_val.substring(decimal_pos);
+
+        // add commas to left side of number
+        left_side = formatNumber(left_side);
+
+        // validate right side
+        right_side = formatNumber(right_side);
+
+        // On blur make sure 2 numbers after decimal
+        if (blur === "blur") {
+        right_side += "00";
+        }
+
+        // Limit decimal to only 2 digits
+        right_side = right_side.substring(0, 2);
+
+        // join number by .
+        input_val = "$" + left_side + "." + right_side;
+    } else {
+        // no decimal entered
+        // add commas to number
+        // remove all non-digits
+        input_val = formatNumber(input_val);
+        input_val = "₱" + input_val;
+
+        // final formatting
+        if (blur === "blur") {
+        input_val += ".00";
+        }
+    }
+
+    // send updated string to input
+    input.val(input_val);
+
+    // put caret back in the right position
+    var updated_len = input_val.length;
+    caret_pos = updated_len - original_len + caret_pos;
+    input[0].setSelectionRange(caret_pos, caret_pos);
+    }
+</script>
 @endsection
 
 
@@ -151,10 +233,9 @@
     <li class="breadcrumb-item"><a href="javascript:;">Page Options</a></li>
     <li class="breadcrumb-item active">Blank Page</li>
 </ol>
-<!-- end breadcrumb -->
+
 <!-- begin page-header -->
 <h1 class="page-header">Blank Page <small>header small text goes here...</small></h1>
-<!-- end page-header -->
 
 <!-- begin panel -->
 <div class="panel panel-inverse">
@@ -215,7 +296,7 @@
                     <div class="form-group row m-b-10">
                         <label class="col-md-3 text-md-right col-form-label">Amount</label>
                         <div class="col-md-6">
-                            <input type="number" name="amount" placeholder="input amount..." class="form-control" />
+                            <input id="amount" type="text" name="amount" placeholder="0.00" class="form-control" />
                             <span class="error_msg"></span>
                         </div>
                     </div>

@@ -32,14 +32,14 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        var table = $('#yajra-datatable').DataTable({
+        var table = $('#disbursement_table').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{route('fund_moni_and_disb')}}",
             columns: [
                 {data: 'fund_name', name: 'fund_name'},
                 {data: 'description', name: 'description'},
-                {data: 'amount', name: 'amount'},
+                {data: 'amount', name: 'amount', render: $.fn.dataTable.render.number( ',', '.', 2, '&#8369;').display},
                 {data: 'action', name: 'action', orderable: true, searchable: true},
             ]
         });
@@ -145,13 +145,13 @@
     <div class="panel-body">
         <br>
         <br><br>
-        <table id="yajra-datatable" class="table table-striped table-bordered text-center">            
-            <thead>
+        <table id="disbursement_table" class="table table-striped table-bordered table-hover text-center">            
+            <thead style="background-color: #008a8a">
                 <tr>                    
-                    <th>Fund Source</th>
-                    <th>Program</th>
-                    <th>Amount</th>                    
-                    <th>View Breakdown </th>
+                    <th style="color: white">Fund Source</th>
+                    <th style="color: white">Program</th>
+                    <th style="color: white">Amount</th>                    
+                    <th style="color: white">View Breakdown</th>
                 </tr>
             </thead>
             <tbody>

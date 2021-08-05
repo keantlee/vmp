@@ -13,7 +13,7 @@
             <span>User Management</span>
         </a>        
     </li> --}}
-    <li class="has-sub {{Route::currentRouteName() == 'user.index' ? 'active' : null}}">
+    <li class="has-sub {{Route::currentRouteName() == 'user.show' ? 'active' : null}}">
         <a href="javascript:;">
             <b class="caret"></b>
             <i class="fa fa-th-large"></i>
@@ -21,15 +21,15 @@
         </a>
         <ul class="sub-menu">
             <li class="">
-                <a href="#">List of users</a>
+                <li class="{{Route::currentRouteName() == 'user.show' ? 'active' : null}}"><a href="{{ route('user.show') }}">List of users</a></li>
             </li>
         </ul>
     </li>
     <li class="has-sub {{Route::currentRouteName() == 'farmer.main' ? 'active' : null}}">
         <a href="{{route('farmer.main')}}">
-            <b class="caret"></b>
+            {{-- <b class="caret"></b> --}}
             <i class="fa fa-th-large"></i>
-            <span>Farmers List</span> 
+            <span>Farmers Intervention Details</span> 
         </a>
         {{-- <ul class="sub-menu">
             <li class="">
@@ -56,13 +56,22 @@
         <a href="javascript:;">
             <b class="caret"></b>
             <i class="fa fa-th-large"></i>
-            <span>Reports</span> 
+            <span>Reports Module</span> 
         </a>
         <ul class="sub-menu">
             <li class="">
-                <a href="#">List of users</a>
+                <a href="#">Total claim by region, province, and supplier</a>
             </li>
-        </ul>
+            <li class="">
+                <a href="#">Summary claims by supplier</a>
+            </li>
+            <li class="">
+                <a href="#">Claimed not yet paid</a>
+            </li>
+            <li class="">
+                <a href="#">Total number of ready vouchers by region, province, and suppliers</a>
+            </li>
+        </ul>    
     </li>
     
     {{-- <li class="has-sub">

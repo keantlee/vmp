@@ -1,5 +1,5 @@
 @extends('global.base')
-@section('title', "Budget | Fund Source Encoding")
+@section('title', "Farmers | List")
 
 {{--  import in this section your css files--}}
 @section('page-css')
@@ -140,202 +140,6 @@
         }); 
     });
 </script>
-
-{{-- <script id="details-template" type="text/x-handlebars-template">
-  <table class="table">
-      <tr>
-          <td>Interventions:</td>
-          <td>
-            <div class="container__img-holder">
-              <img src="https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260" alt="Image">
-            </div>
-            <div class="container__img-holder">
-              <img src="https://images.pexels.com/photos/371589/pexels-photo-371589.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260" alt="Image">
-            </div>
-            <div class="container__img-holder">
-              <img src="https://images.pexels.com/photos/258109/pexels-photo-258109.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260" alt="Image">
-            </div>
-            <div class="container__img-holder">
-              <img src="https://images.pexels.com/photos/210186/pexels-photo-210186.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" alt="Image">
-            </div>
-            <div class="container__img-holder">
-              <img src="https://images.pexels.com/photos/1903702/pexels-photo-1903702.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" alt="Image">
-            </div>
-            <div class="container__img-holder">
-              <img src="https://images.pexels.com/photos/589697/pexels-photo-589697.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" alt="Image">
-            </div>
-            <div class="img-popup">
-                <img src="" alt="Popup Image">
-                <div class="close-btn">
-                  <div class="bar"></div>
-                  <div class="bar"></div>
-                </div>
-            </div>
-          </div>
-          </td>
-      </tr>
-      <tr>
-          <td>Location:</td>
-          <td>
-            <div class="row">
-              <div class="col-md-12 modal_body_map">
-                <div class="location-map" id="location-map">
-                  <div style="width: 600px; height: 400px;" id="map_canvas"></div>
-                </div>
-              </div>
-            </div>
-          </td>
-      </tr>
-  </table>
-  <script>
-    // image intervention: 
-    $(document).ready(function() {
-      // required elements
-      var imgPopup = $('.img-popup');
-      var imgCont  = $('.container__img-holder');
-      var popupImage = $('.img-popup img');
-      var closeBtn = $('.close-btn');
-  
-      // handle events
-      imgCont.on('click', function() {
-        var img_src = $(this).children('img').attr('src');
-        imgPopup.children('img').attr('src', img_src);
-        imgPopup.addClass('opened');
-      });
-  
-      $(imgPopup, closeBtn).on('click', function() {
-        imgPopup.removeClass('opened');
-        imgPopup.children('img').attr('src', '');
-      });
-  
-      popupImage.on('click', function(e) {
-        e.stopPropagation();
-      });
-    });
-  </script>
-
-  <script>
-    // Map Location
-    var map = null;
-    var myMarker;
-    var myLatlng;
-    var lat = 21.03;
-    var lng = 105.85; 
-
-    function initMap() {
-      myLatlng = new google.maps.LatLng(lat, lng);
-
-      var myOptions = {
-        zoom: 12,
-        zoomControl: true,
-        center: myLatlng,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      };
-
-      map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-
-      myMarker = new google.maps.Marker({
-        position: myLatlng
-      });
-      myMarker.setMap(map);
-    }
-  </script>
-</script>
-
-<script>
-      // Re-init map before show modal
-      $('#ViewFarmerDetailsModal').on('show.bs.modal', function(event) {
-      var button = $(event.relatedTarget);
-      initMap(button.data('lat'), button.data('lng'));
-      $("#location-map").css("width", "100%");
-      $("#map_canvas").css("width", "100%");
-    });
-
-    // Trigger map resize event after modal shown
-    $('#ViewFarmerDetailsModal').on('shown.bs.modal', function() {
-      google.maps.event.trigger(map, "resize");
-      map.setCenter(myLatlng);
-    });
-</script> --}}
-
-<script>
-    $(document).on('click', '#view_farmer_detail_btn', function () {       
-        var ref_no = $(this).data('id');
-
-        var route = '/farmer/view-details/'+ref_no;
-
-        var template = Handlebars.compile($("#details-template").html());
-
-        var table = $('#farmer-details-datatable').DataTable({
-            destroy:true,
-            processing: true,
-            serverSide: true,
-            responsive: true,
-            "paging": false,
-            ajax: { url: route},
-            columns: [
-              {
-                "className":      'details-control',
-                "orderable":      false,
-                "data":           null,
-                "defaultContent": ''
-              },
-                {data: 'reference_no', name: 'reference_no'},
-                {data: 'fullname_column', name: 'fullname_column'},
-                {data: 'description', name: 'description'},
-                {data: 'quantity', name: 'quantity'},
-                {data: 'amount', name: 'amount'},
-                {data: 'total_amount', name: 'total_amount'},
-                {data: 'tansac_by_fullname', name: 'tansac_by_fullname'},
-                {data: 'payout_date', name: 'payout_date', orderable: true, searchable: true},
-            ],
-            "order": [[1, 'asc']]
-        });
-
-        // Add event listener for opening and closing details
-        $('#farmer-details-datatable tbody').on('click', 'td.details-control', function () {
-            var tr = $(this).closest('tr');
-            var row = table.row( tr );
-            // var open = row.child.isShown();
-            
-            if ( row.child.isShown() ) {
-                // This row is already open - close it
-                tr.removeClass('shown');
-                row.child.hide();
-            }
-            else {
-                // close all previously opened rows
-                // closeOpenedRows(table, tr);
-
-                // Open this row
-                row.child( template(row.data()) ).show();
-                tr.addClass('shown');
-               
-                // store current selection
-                // openRows.push(tr);
-            }
-        });
-        $('#farmer-details-datatable').DataTable().ajax.reload();
-    });
-</script>
-{{-- <script>
-    var openRows = new Array();
-    function closeOpenedRows(table, selectedRow) {
-    $.each(openRows, function (index, openRow) {
-        // not the selected row!
-        if ($.data(selectedRow) !== $.data(openRow)) {
-            var rowToCollapse = table.row(openRow);
-            rowToCollapse.child.hide();
-            openRow.removeClass('shown');
-            // replace icon to expand
-            $(openRow).find('td.details-control').html('<span class="glyphicon glyphicon-plus"></span>');
-            // remove from list
-            var index = $.inArray(selectedRow, openRows);
-            openRows.splice(index, 1);
-        }
-    });
-}
-</script> --}}
 @endsection
 
 
@@ -363,7 +167,7 @@
         <div class="widget widget-stats bg-gradient-green">
             <div class="stats-icon stats-icon-lg"><i class="fa fa-globe fa-fw"></i></div>
             <div class="stats-content">
-                <div class="stats-title">TODAY'S VISITS</div>
+                <div class="stats-title" style="font-size: 15px">RRP2 DRY SEASON 2021  (TOTAL CLAIMED) :</div>
                 <div class="stats-number">7,842,900</div>
                 <div class="stats-progress progress">
                     <div class="progress-bar" style="width: 70.1%;"></div>
@@ -378,7 +182,7 @@
         <div class="widget widget-stats bg-gradient-blue">
             <div class="stats-icon stats-icon-lg"><i class="fa fa-dollar-sign fa-fw"></i></div>
             <div class="stats-content">
-                <div class="stats-title">TODAY'S PROFIT</div>
+                <div class="stats-title" style="font-size: 15px">RRP2 WET SEASON 2021 (TOTAL CLAIMED) :</div>
                 <div class="stats-number">180,200</div>
                 <div class="stats-progress progress">
                     <div class="progress-bar" style="width: 40.5%;"></div>
@@ -393,7 +197,7 @@
         <div class="widget widget-stats bg-gradient-purple">
             <div class="stats-icon stats-icon-lg"><i class="fa fa-archive fa-fw"></i></div>
             <div class="stats-content">
-                <div class="stats-title">NEW ORDERS</div>
+                <div class="stats-title" style="font-size: 15px">CASH AND FOOD 2021 (TOTAL CLAIMED) :</div>
                 <div class="stats-number">38,900</div>
                 <div class="stats-progress progress">
                     <div class="progress-bar" style="width: 76.3%;"></div>
@@ -408,7 +212,7 @@
         <div class="widget widget-stats bg-gradient-black">
             <div class="stats-icon stats-icon-lg"><i class="fa fa-comment-alt fa-fw"></i></div>
             <div class="stats-content">
-                <div class="stats-title">NEW COMMENTS</div>
+                <div class="stats-title" style="font-size: 15px">TOTAL OF VOUCHERS NOT YET CLAIMED : </div>
                 <div class="stats-number">3,988</div>
                 <div class="stats-progress progress">
                     <div class="progress-bar" style="width: 54.9%;"></div>
@@ -424,80 +228,22 @@
 <!-- begin panel -->
 <div class="panel panel-inverse">
     <div class="panel-heading">
-        {{-- <button id="open" data-toggle="modal" data-target="#viewmapmap">showMap</button> --}}
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" data-lat='21.03' data-lng='105.85'>
-            Location 1
-        </button>
         <h4 class="panel-title">Panel Title here</h4>
     </div>
     <div class="panel-body">
         <br>
         <br><br>
         <table id="farmer-datatable" class="table table-striped table-bordered text-center">
-            <thead>
+            <thead style="background-color: #008a8a">
                 <tr>
-                    <th>Reference No.</th>
-                    <th>Fullname</th>
-                    <th>View farmer details</th>
+                    <th style="color: white">Reference No.</th>
+                    <th style="color: white">Fullname</th>
+                    <th style="color: white">View farmer details</th>
                 </tr>
             </thead>
             <tbody>
             </tbody>
         </table>
-    </div>
-</div>
-
-<!-- #modal-view -->
-<div class="modal fade" id="ViewFarmerDetailsModal">
-    <div class="modal-dialog modal-lg" style="max-width: 80%">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: #008a8a">
-                <h4 class="modal-title" style="color: white">View Category</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
-                    style="color: white">×</button>
-            </div>
-            <div class="modal-body">
-                {{--modal body start--}}
-                <h2 id="ViewCategName" align="center"></h2>
-                <label style="display: block; text-align: center">Sample</label>
-
-                <table id="farmer-details-datatable" class="table table-striped table-bordered text-center mb-5 display" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th><span id="icon"></span></th>
-                            <th>Reference No.</th>
-                            <th>Full name</th>
-                            <th>Program</th>
-                            <th>Quantity</th>
-                            <th>Amount</th>
-                            <th>Total Amount</th>
-                            <th>Transact By</th>
-                            <th>Payout Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-                <div class="row">
-                    {{-- <div class="row">
-                      <div class="col-md-12 modal_body_map">
-                        <div class="location-map" id="location-map">
-                          <div style="width: 600px; height: 400px;" id="map_canvas"></div>
-                        </div>
-                      </div>
-                    </div> --}}
-                </div>
-
-                {{-- Map location of claiming intervention --}}
-                {{-- <div id="map">
-                </div> --}}
-                {{-- Fetch all location_markers using show_marker_controller.php from the database  --}}
-                {{-- <script> var location_markers = {!!json_encode($markers) !!}; </script> --}}
-            </div>
-            <div class="modal-footer">
-                <a href="javascript:;" class="btn btn-white" data-dismiss="modal">Close</a>
-            </div>
-        </div>
     </div>
 </div>
 @endsection

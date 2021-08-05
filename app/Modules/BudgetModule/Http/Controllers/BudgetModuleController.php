@@ -17,13 +17,11 @@ class BudgetModuleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index(){
         return view("BudgetModule::index");
     }
 
-    public function fund_source_encoding_view()
-    {
+    public function fund_source_encoding_view(){
         $budgetModel = new BudgetModule;
 
         $programs = $budgetModel->get_program();
@@ -33,8 +31,7 @@ class BudgetModuleController extends Controller
         return view("BudgetModule::fund_source_encoding", compact("programs", "regions"));
     }
 
-    public function get_province($reg_code)
-    {
+    public function get_province($reg_code){
         $budgetModel = new BudgetModule;
 
         $provinces = $budgetModel->get_prov($reg_code);
@@ -42,24 +39,17 @@ class BudgetModuleController extends Controller
         return response()->json($provinces);
     }
 
-    public function fund_encoding_ors(Request $request)
-    {
+    public function fund_encoding_ors(Request $request){
+        $budgetModel = new BudgetModule;
+
         $program = $request->select_program;
         $uacs = $request->uacs;
-        $amount = $request->amount;
+        $amount = floatval(preg_replace('/[^\d.]/', '', $request->amount));
         $region = $request->select_region;
         $province = $request->select_province;
         $particulars = $request->particulars;
 
-        DB::table('fund_source')->insert([
-            'fund_id' => Uuid::uuid4(),
-            'program_id'=> $program, 
-            'uacs'=> $uacs, 
-            'amount'=> $amount, 
-            'reg'=> $region, 
-            'prv'=> $province, 
-            'particulars'=> $particulars,
-        ]);
+        $budgetModel->insert_new_fund($program, $uacs, $amount, $region, $province, $particulars);
 
         $success_response = ["success" => true, "message" => "ORS form have been submit successfully!"];
         return response()->json($success_response, 200);
@@ -69,9 +59,9 @@ class BudgetModuleController extends Controller
         $budgetModel = new BudgetModule;
 
         if($request->ajax()){
-            return DataTables::of($budgetModel->disbursement()) // $budgetModel->disbursement()
+            return DataTables::of($budgetModel->disbursement())
             ->addColumn('action', function($row){
-                $return = '<a href="/budget/fund-monitoring-and-disbursement/view-fund-source-breakdown/'.$row->fund_id.'" id="btn_data" type="button" class="btn btn-success">
+                $return = '<a href="/budget/fund-monitoring-and-disbursement/view-fund-source-breakdown/'.$row->fund_id.'/'.$row->description.'" id="btn_data" type="button" class="btn btn-success">
                             <i class="fa fa-eye"></i> View
                            </a>';
                 return $return;
@@ -83,11 +73,11 @@ class BudgetModuleController extends Controller
         return view("BudgetModule::fund_monitoring_and_disbursement");
     }
 
-    public function get_fund_source_breakdown(Request $request, $fund_id){
+    public function get_fund_source_breakdown(Request $request, $fund_id, $reg_program){
         $budgetModel = new BudgetModule;
 
         if($request->ajax()){
-            return DataTables::of($budgetModel->breakdown($fund_id))->make(true);
+            return DataTables::of($budgetModel->breakdown($fund_id, $reg_program))->make(true);
         }  
 
         return view("BudgetModule::fund_source_breakdown");
