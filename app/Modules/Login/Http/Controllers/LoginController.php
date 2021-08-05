@@ -77,6 +77,12 @@ class LoginController extends Controller
                      * 2.) if there is no existing data proceed generating new otp.
                      */
                     if(($check_otp_user_records == true)){
+                        // $check = new OTP;
+
+                        // if($check->check_otp_expiration($uOTP->date_created) == true){
+                        //     DB::table('user_otp')->where('user_id', [Session::get('uuid')])->update(['status' => "0"]);
+        
+                        // }
                         foreach($users_otp as $uOTP){
                             //check date expiration
                             if($uOTP->status == "0"){

@@ -32,7 +32,8 @@ class OTPController extends Controller
 
                     $error_response = ['error'=> true, 'message'=>'The OTP Pin has been expired!', 'auth'=>false];
                     return response()->json( $error_response, 302); 
-                }else{
+                }
+                else{
                     DB::table('user_otp')->where('user_id', [Session::get('uuid')])->update(['status' => "1"]);
                     
                     $otp_verified_response = ['success'=> true, 'message' => 'OTP Pin is Valid!', 'auth' => false];
